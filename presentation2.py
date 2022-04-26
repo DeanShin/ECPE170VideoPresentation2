@@ -12,45 +12,36 @@ def main():
 
     # Create UDP socket
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    # Bind to server
-    s.bind(server_ip)
 
     # Generate request
     protocol_version_num = 1
-    a = 49
-    b = 51
-    name = bytes("Dean Shin", "ascii")
-    chars_in_name = len(name)
+    a = 30
+    b = 60
+    name = "Dean Shin"
 
     request_bytes = struct.pack(
-        ">biiis",
+        ">biii",
         protocol_version_num,
         a,
         b,
-        chars_in_name,
-        name
-    )
+        len(name)
+    ) + bytes(name, "ascii")
 
-    print("Requesting...")
     # Send request message to server
     s.sendto(request_bytes, server_address)
-    print("Request complete!")
 
-    print("Waiting for response...")
     # Receive response from server
-    raw_bytes, rec_address = s.recvfrom(1024)
-    print("Response received!")
+    raw_bytes, rec_address = s.recvfrom(4096)
 
     # Close socket
     s.close()
 
     # Decode response from server
-    rec_protocol_version_num, status_code, total_sum = struct.unpack(">chi", raw_bytes)
-    if status_code != 200:
+    rec_protocol_version_num, status_code, total_sum = struct.unpack("!BHI", raw_bytes)
+    if status_code != 1:
         print("Failure\n")
     else:
-        print("Success\n")
-        print(f"{a}+{b}={total_sum}\n")
+        print(f"{a}+{b}={total_sum}")
 
 
 if __name__ == "__main__":
