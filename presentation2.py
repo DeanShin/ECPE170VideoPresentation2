@@ -13,7 +13,7 @@ def main():
     # Create UDP socket
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     # Bind to server
-    s.bind(("127.0.0.1", 8000))
+    s.bind(server_ip)
 
     # Generate request
     protocol_version_num = 1
